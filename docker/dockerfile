@@ -1,0 +1,14 @@
+
+FROM debian
+ADD docker.list /etc/apt/sources.list.d/
+RUN apt-get update && apt-get -y upgrade && apt -y install nginx && apt-get clean && \
+    cd /var/www/ && rm -rf ./* && \
+    mkdir -p sashasty.com/img && \
+    chmod -R 754 /var/www/sashasty.com/ && \
+    useradd Alexander && groupadd Kharitonov && usermod -aG Kharitonov Alexander && \
+    chown -R Alexander:Kharitonov /var/www/sashasty.com/ && \
+    sed -i 's/\/var\/www\/html/\/var\/www\/sashasty.com/g' /etc/nginx/sites-enabled/default && \
+    sed -i 's/user www-data/user Alexander/g' /etc/nginx/nginx.conf
+ADD index.html /var/www/sashasty.com/
+ADD img.jpg /var/www/sashasty.com/img/
+CMD ["nginx", "-g", "daemon off;"]
